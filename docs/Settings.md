@@ -5132,6 +5132,36 @@ Centidegrees of pan servo rotation us PWM signal. A servo with 180 degrees of ro
 
 ---
 
+### osd_pan_servo_hide_ahi
+
+Hide AHI if pan servo panned defined +/- amount of degrees. 0 for disable.
+
+| Default | Min | Max |
+| --- | --- | --- |
+| 20 | 0 | 180 |
+
+---
+
+### osd_tilt_servo_index
+
+Index of the tilt servo, used to adjust osd AHI direction based on camera tilt. Note that this feature does not work with continiously rotating servos.
+
+| Default | Min | Max |
+| --- | --- | --- |
+| 0 | 0 | 16 |
+
+---
+
+### osd_tilt_servo_pwm2centideg
+
+Centidegrees of tilt servo rotation us PWM signal. A servo with 180 degrees of rotation from 1000 to 2000 us PWM typically needs `18` for this setting. Change sign to inverse direction.
+
+| Default | Min | Max |
+| --- | --- | --- |
+| 0 | -36 | 36 |
+
+---
+
 ### osd_plus_code_digits
 
 Numer of plus code digits before shortening with `osd_plus_code_short`. Precision at the equator: 10=13.9x13.9m; 11=2.8x3.5m; 12=56x87cm; 13=11x22cm.

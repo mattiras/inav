@@ -1225,6 +1225,21 @@ int16_t osdGetPanServoOffset(void)
     return (int16_t)CENTIDEGREES_TO_DEGREES((servoPosition - servoMiddle) * osdConfig()->pan_servo_pwm2centideg);
 }
 
+int16_t osdGetTiltServoOffset(void)
+{
+    int8_t servoIndex = osdConfig()->tilt_servo_index;
+    int16_t servoMiddle = servoParams(servoIndex)->middle;
+    int16_t servoPosition = servo[servoIndex];
+
+    gimbalDevice_t *dev = gimbalCommonDevice();
+    if (dev && gimbalCommonIsReady(dev)) {
+        servoPosition = gimbalCommonGetTiltPwm(dev);
+        servoMiddle = PWM_RANGE_MIDDLE + gimbalConfig()->tiltTrim;
+    }
+
+    return (int16_t)CENTIDEGREES_TO_DEGREES((servoPosition - servoMiddle) * osdConfig()->tilt_servo_pwm2centideg);
+}
+
 // Returns a heading angle in degrees normalized to [0, 360).
 int osdGetHeadingAngle(int angle)
 {
@@ -2832,12 +2847,28 @@ static bool osdDrawSingleElement(uint8_t item)
         {
             float rollAngle = DECIDEGREES_TO_RADIANS(attitude.values.roll);
             float pitchAngle = DECIDEGREES_TO_RADIANS(attitude.values.pitch);
-
+            float panOffset = (osdGetPanServoOffset());
+            uint8_t pan_servo_hide_ahi = (osdConfig()->pan_servo_hide_ahi);
+            
+            if (osdConfig()->tilt_servo_pwm2centideg != 0){
+                float tiltOffset = DEGREES_TO_RADIANS(osdGetTiltServoOffset());
+                if (IS_RC_MODE_ACTIVE(BOXCAMSTAB)) {
+                    tiltOffset -= pitchAngle;
+                    pitchAngle = 0;
+                }
+                pitchAngle -= tiltOffset;
+            }
             pitchAngle -= osdConfig()->ahi_camera_uptilt_comp ? DEGREES_TO_RADIANS(osdConfig()->camera_uptilt) : 0;
             pitchAngle += DEGREES_TO_RADIANS(getFixedWingLevelTrim());
             if (osdConfig()->ahi_reverse_roll) {
                 rollAngle = -rollAngle;
             }
+
+            if (fabs(panOffset) > pan_servo_hide_ahi && pan_servo_hide_ahi != 0){
+                rollAngle = 0;
+                pitchAngle = 90;
+            }
+
             osdDrawArtificialHorizon(osdDisplayPort, osdGetDisplayPortCanvas(),
                  OSD_DRAW_POINT_GRID(elemPosX, elemPosY), rollAngle, pitchAngle);
             osdDrawSingleElement(OSD_HORIZON_SIDEBARS);
@@ -3041,6 +3072,24 @@ static bool osdDrawSingleElement(uint8_t item)
                     displayWriteWithAttr(osdDisplayPort, elemPosX+1, elemPosY, buff, elemAttr);
                 }
                 displayWriteChar(osdDisplayPort, elemPosX, elemPosY, SYM_SERVO_PAN_IS_CENTRED);
+            }
+
+            return true;
+        }
+        break;
+    case OSD_TILT_SERVO:
+        {
+            int16_t tiltOffset = osdGetTiltServoOffset();
+            int16_t pitchAngle = DECIDEGREES_TO_DEGREES(attitude.values.pitch);
+
+            if (osdConfig()->tilt_servo_indicator_show_degrees) {
+
+                if (IS_RC_MODE_ACTIVE(BOXCAMSTAB)) {
+                    tiltOffset -= pitchAngle;
+                }
+
+                tfp_sprintf(buff, "%3d%c", tiltOffset, SYM_DEGREES);
+                displayWriteWithAttr(osdDisplayPort, elemPosX, elemPosY, buff, elemAttr);
             }
 
             return true;
@@ -4162,6 +4211,9 @@ PG_RESET_TEMPLATE(osdConfig_t, osdConfig,
     .pan_servo_pwm2centideg = SETTING_OSD_PAN_SERVO_PWM2CENTIDEG_DEFAULT,
     .pan_servo_offcentre_warning = SETTING_OSD_PAN_SERVO_OFFCENTRE_WARNING_DEFAULT,
     .pan_servo_indicator_show_degrees = SETTING_OSD_PAN_SERVO_INDICATOR_SHOW_DEGREES_DEFAULT,
+    .pan_servo_hide_ahi = SETTING_OSD_PAN_SERVO_HIDE_AHI_DEFAULT,
+    .tilt_servo_index = SETTING_OSD_TILT_SERVO_INDEX_DEFAULT,
+    .tilt_servo_pwm2centideg = SETTING_OSD_TILT_SERVO_PWM2CENTIDEG_DEFAULT,
     .esc_rpm_precision = SETTING_OSD_ESC_RPM_PRECISION_DEFAULT,
     .mAh_precision = SETTING_OSD_MAH_PRECISION_DEFAULT,
     .osd_switch_indicator0_name = SETTING_OSD_SWITCH_INDICATOR_ZERO_NAME_DEFAULT,

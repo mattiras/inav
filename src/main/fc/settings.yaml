@@ -3735,6 +3735,29 @@ groups:
         field: pan_servo_indicator_show_degrees
         type: bool
         default_value: OFF
+      - name: osd_pan_servo_hide_ahi
+        description: Hide AHI if pan servo panned defined +/- amount of degrees. 0 for disable.
+        field: pan_servo_hide_ahi
+        min: 0
+        max: 180
+        default_value: 20
+      - name: osd_tilt_servo_index
+        description: Index of the tilt servo, used to adjust osd AHI direction based on camera tilt. Note that this feature does not work with continiously rotating servos.
+        field: tilt_servo_index
+        min: 0
+        max: 16
+        default_value: 0
+      - name: osd_tilt_servo_pwm2centideg
+        description: Centidegrees of tilt servo rotation us PWM signal. A servo with 180 degrees of rotation from 1000 to 2000 us PWM typically needs `18` for this setting. Change sign to inverse direction.
+        field: tilt_servo_pwm2centideg
+        min: -36
+        max: 36
+        default_value: 0
+      - name: osd_tilt_servo_indicator_show_degrees
+        description: Show the degrees of offset from centre on the tilt servo OSD display element.
+        field: tilt_servo_indicator_show_degrees
+        type: bool
+        default_value: OFF
       - name: osd_esc_rpm_precision
         description: Number of characters used to display the RPM value.
         field: esc_rpm_precision

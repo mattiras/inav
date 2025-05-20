@@ -141,4 +141,13 @@ int16_t gimbalCommonGetPanPwm(const gimbalDevice_t *gimbalDevice)
     return gimbalDevice ? gimbalDevice->currentPanPWM : PWM_RANGE_MIDDLE + gimbalConfig()->panTrim;
 }
 
+int16_t gimbalCommonGetTiltPwm(const gimbalDevice_t *gimbalDevice)
+{
+    if (gimbalDevice && gimbalDevice->vTable->getGimbalTiltPWM) {
+        return gimbalDevice->vTable->getGimbalTiltPWM(gimbalDevice);
+    }
+
+    return gimbalDevice ? gimbalDevice->currentTiltPWM : PWM_RANGE_MIDDLE + gimbalConfig()->tiltTrim;
+}
+
 #endif

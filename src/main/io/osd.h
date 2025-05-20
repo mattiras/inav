@@ -313,6 +313,7 @@ typedef enum {
     OSD_H_DIST_TO_FENCE,
     OSD_V_DIST_TO_FENCE,
     OSD_NAV_FW_ALT_CONTROL_RESPONSE,
+    OSD_TILT_SERVO,
     OSD_ITEM_COUNT // MUST BE LAST
 } osd_items_e;
 
@@ -467,6 +468,10 @@ typedef struct osdConfig_s {
     int8_t          pan_servo_pwm2centideg;             // Centidegrees of servo rotation per us pwm
     uint8_t         pan_servo_offcentre_warning;        // Degrees around the centre, that is assumed camera is wanted to be facing forwards, but isn't centred
     bool            pan_servo_indicator_show_degrees;   // Show the degrees of offset for the pan servo
+    uint8_t         pan_servo_hide_ahi;                 // Degrees around the centre of camera pan. 0 disables.
+    bool            tilt_servo_indicator_show_degrees;  // Show the degrees of offset for the tilt servo
+    uint8_t         tilt_servo_index;                   // Index of the tilt servo used for AHI direction offset
+    int8_t          tilt_servo_pwm2centideg;            // Centidegrees of servo rotation per us pwm
     uint8_t         crsf_lq_format;
     uint8_t         sidebar_height;                     // sidebar height in rows, 0 turns off sidebars leaving only level indicator arrows
     uint8_t         telemetry;                          // use telemetry on displayed pixel line 0

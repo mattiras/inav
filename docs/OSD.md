@@ -197,6 +197,7 @@ Here are the OSD Elements provided by INAV.
 | 163 | OSD_COURSE_TO_FENCE                              | 8.0.0  |       |
 | 164 | OSD_H_DIST_TO_FENCE                              | 8.0.0  |       |
 | 165 | OSD_V_DIST_TO_FENCE                              | 8.0.0  |       |
+| 165 | OSD_TILT_SERVO                                   | x.0.0  |       |
 
 # Pilot Logos
 
